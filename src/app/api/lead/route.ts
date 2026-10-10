@@ -62,7 +62,6 @@ export async function POST(request: Request) {
 
   const payload = {
     ...lead,
-    services: lead.services.join(", "),
     source: "ereach-website",
     submittedAt: new Date().toISOString(),
   };

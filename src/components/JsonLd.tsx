@@ -1,4 +1,4 @@
-import { offeredServices } from "@/content/services";
+import { services } from "@/content/services";
 import { site } from "@/content/site";
 
 /** Structured data describing the business. Only includes verified facts. */
@@ -13,7 +13,7 @@ export function JsonLd() {
     logo: `${site.url}/icon.svg`,
     image: `${site.url}/opengraph-image`,
     areaServed: "US",
-    knowsAbout: offeredServices.map((s) => s.title),
+    knowsAbout: services.map((s) => s.title),
     sameAs: Object.values(site.social).filter(Boolean),
   };
   return (

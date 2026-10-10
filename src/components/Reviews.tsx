@@ -41,8 +41,7 @@ export function Reviews() {
           <SectionHeading
             id="reviews-title"
             eyebrow="Client experiences"
-            title="Good work. Strong partnerships."
-            intro="What it's like to work with us, in our clients' own words. We only publish genuine reviews shared with permission."
+            title="What our clients say."
           />
           {reviews.length > 1 && (
             <div data-reveal className="flex gap-2">

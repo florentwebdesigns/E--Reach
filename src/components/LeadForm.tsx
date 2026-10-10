@@ -2,32 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import {
-  budgetOptions,
-  emptyLead,
-  goalOptions,
-  serviceOptions,
-  validateLead,
-  type LeadErrors,
-  type LeadInput,
-} from "@/lib/lead";
+import { emptyLead, helpOptions, validateLead, type LeadErrors, type LeadInput } from "@/lib/lead";
 import { bookingIsExternal, site } from "@/content/site";
 import { Arrow, PhoneLink } from "./CtaLink";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-const fieldOrder: (keyof LeadInput)[] = [
-  "fullName",
-  "businessName",
-  "email",
-  "phone",
-  "website",
-  "industry",
-  "services",
-  "goal",
-  "budget",
-  "details",
-];
+const fieldOrder: (keyof LeadInput)[] = ["fullName", "email", "phone", "businessName", "help", "details"];
 
 function FieldError({ id, msg }: { id: string; msg?: string }) {
   return (
@@ -58,13 +39,12 @@ export function LeadForm() {
     if (touched[k] || errors[k]) setErrors((e) => ({ ...e, [k]: validateLead(next)[k] }));
   };
 
-  const blur = (k: keyof LeadInput) => {
+  const blur = (k: keyof LeadInput, e?: React.FocusEvent) => {
+    // Moving focus to the submit button: let submit validate, so an error
+    // appearing here doesn't shift the button out from under the click.
+    if ((e?.relatedTarget as HTMLButtonElement | null)?.type === "submit") return;
     setTouched((t) => ({ ...t, [k]: true }));
     setErrors((e) => ({ ...e, [k]: validateLead(values)[k] }));
-  };
-
-  const toggleService = (s: string) => {
-    set("services", values.services.includes(s) ? values.services.filter((x) => x !== s) : [...values.services, s]);
   };
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -117,10 +97,9 @@ export function LeadForm() {
             <path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="24" strokeDashoffset="24" style={{ animation: "dash 0.8s 0.2s var(--ease-out-expo) forwards" }} />
           </svg>
         </span>
-        <h3 className="mt-8 text-3xl font-semibold text-ink-text">Thanks, {values.fullName.split(" ")[0]}. Your request is in.</h3>
+        <h3 className="mt-8 text-3xl font-semibold text-ink-text">Thanks, {values.fullName.split(" ")[0]}. We got your request.</h3>
         <p className="mt-4 max-w-md text-lg leading-relaxed text-slate-text">
-          We&apos;ve received your consultation request and will reach out at <strong className="text-ink-text">{values.email}</strong> to find a time
-          that works. This is a request, not a confirmed appointment.
+          We&apos;ll email you at <strong className="text-ink-text">{values.email}</strong> to set up a time to talk.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {bookingIsExternal && (
@@ -143,8 +122,7 @@ export function LeadForm() {
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate aria-describedby="form-required-note">
       <div className="mb-8">
-        <h3 className="text-[1.9rem] font-semibold leading-tight text-ink-text sm:text-[2.2rem]">Tell us what you want to achieve.</h3>
-        <p className="mt-2 text-slate-text">Share a few details about your business and we&apos;ll take it from there.</p>
+        <h3 className="text-[1.9rem] font-semibold leading-tight text-ink-text">Request your free consultation</h3>
         <p id="form-required-note" className="mt-2 text-sm text-slate-text/80">
           Fields marked <span className="text-electric">*</span> are required.
         </p>
@@ -159,93 +137,47 @@ export function LeadForm() {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="fullName" className="field-label">
-            Full name <span className="text-electric">*</span>
+            Name <span className="text-electric">*</span>
           </label>
-          <input id="fullName" name="fullName" className="field" autoComplete="name" required value={values.fullName} onChange={(e) => set("fullName", e.target.value)} onBlur={() => blur("fullName")} {...aria("fullName")} />
+          <input id="fullName" name="fullName" className="field" autoComplete="name" required value={values.fullName} onChange={(e) => set("fullName", e.target.value)} onBlur={(e) => blur("fullName", e)} {...aria("fullName")} />
           <FieldError id="fullName-error" msg={err("fullName")} />
         </div>
         <div>
-          <label htmlFor="businessName" className="field-label">Business name</label>
-          <input id="businessName" name="businessName" className="field" autoComplete="organization" value={values.businessName} onChange={(e) => set("businessName", e.target.value)} onBlur={() => blur("businessName")} {...aria("businessName")} />
-          <FieldError id="businessName-error" msg={err("businessName")} />
-        </div>
-        <div>
           <label htmlFor="email" className="field-label">
-            Email address <span className="text-electric">*</span>
+            Email <span className="text-electric">*</span>
           </label>
-          <input id="email" name="email" type="email" inputMode="email" className="field" autoComplete="email" required value={values.email} onChange={(e) => set("email", e.target.value)} onBlur={() => blur("email")} {...aria("email")} />
+          <input id="email" name="email" type="email" inputMode="email" className="field" autoComplete="email" required value={values.email} onChange={(e) => set("email", e.target.value)} onBlur={(e) => blur("email", e)} {...aria("email")} />
           <FieldError id="email-error" msg={err("email")} />
         </div>
         <div>
-          <label htmlFor="phone" className="field-label">Phone number</label>
-          <input id="phone" name="phone" type="tel" inputMode="tel" className="field" autoComplete="tel" placeholder="(555) 555-5555" value={values.phone} onChange={(e) => set("phone", e.target.value)} onBlur={() => blur("phone")} {...aria("phone")} />
+          <label htmlFor="phone" className="field-label">Phone</label>
+          <input id="phone" name="phone" type="tel" inputMode="tel" className="field" autoComplete="tel" placeholder="(555) 555-5555" value={values.phone} onChange={(e) => set("phone", e.target.value)} onBlur={(e) => blur("phone", e)} {...aria("phone")} />
           <FieldError id="phone-error" msg={err("phone")} />
         </div>
         <div>
-          <label htmlFor="website" className="field-label">
-            Website <span className="font-normal text-slate-text/70">(optional)</span>
-          </label>
-          <input id="website" name="website" type="text" inputMode="url" className="field" autoComplete="url" placeholder="yourbusiness.com" value={values.website} onChange={(e) => set("website", e.target.value)} onBlur={() => blur("website")} {...aria("website")} />
-          <FieldError id="website-error" msg={err("website")} />
+          <label htmlFor="businessName" className="field-label">Business name</label>
+          <input id="businessName" name="businessName" className="field" autoComplete="organization" value={values.businessName} onChange={(e) => set("businessName", e.target.value)} onBlur={(e) => blur("businessName", e)} {...aria("businessName")} />
+          <FieldError id="businessName-error" msg={err("businessName")} />
         </div>
-        <div>
-          <label htmlFor="industry" className="field-label">Industry or business type</label>
-          <input id="industry" name="industry" className="field" placeholder="e.g. Home services, retail, fitness" value={values.industry} onChange={(e) => set("industry", e.target.value)} onBlur={() => blur("industry")} {...aria("industry")} />
-          <FieldError id="industry-error" msg={err("industry")} />
-        </div>
-
-        <fieldset className="sm:col-span-2" aria-describedby={err("services") ? "services-error" : undefined}>
-          <legend className="field-label">Services of interest</legend>
-          <div className="flex flex-wrap gap-2">
-            {serviceOptions.map((s) => (
-              <label key={s} className="chip-check">
-                <input type="checkbox" name="services" value={s} className="sr-only" checked={values.services.includes(s)} onChange={() => toggleService(s)} />
-                {values.services.includes(s) && (
-                  <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" aria-hidden="true" style={{ animation: "fade 0.3s ease-out" }}>
-                    <path d="M3 8.5l3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
-                {s}
-              </label>
-            ))}
-          </div>
-          <FieldError id="services-error" msg={err("services")} />
-        </fieldset>
-
-        <div>
-          <label htmlFor="goal" className="field-label">
-            Primary marketing goal <span className="text-electric">*</span>
+        <div className="sm:col-span-2">
+          <label htmlFor="help" className="field-label">
+            What do you need help with? <span className="text-electric">*</span>
           </label>
-          <select id="goal" name="goal" className="field" required value={values.goal} onChange={(e) => set("goal", e.target.value)} onBlur={() => blur("goal")} {...aria("goal")}>
+          <select id="help" name="help" className="field" required value={values.help} onChange={(e) => set("help", e.target.value)} onBlur={(e) => blur("help", e)} {...aria("help")}>
             <option value="" disabled>
               Choose one
             </option>
-            {goalOptions.map((g) => (
-              <option key={g} value={g}>
-                {g}
+            {helpOptions.map((o) => (
+              <option key={o} value={o}>
+                {o}
               </option>
             ))}
           </select>
-          <FieldError id="goal-error" msg={err("goal")} />
+          <FieldError id="help-error" msg={err("help")} />
         </div>
-        <div>
-          <label htmlFor="budget" className="field-label">
-            Estimated budget <span className="font-normal text-slate-text/70">(optional)</span>
-          </label>
-          <select id="budget" name="budget" className="field" value={values.budget} onChange={(e) => set("budget", e.target.value)} onBlur={() => blur("budget")} {...aria("budget")}>
-            <option value="">Prefer not to say</option>
-            {budgetOptions.map((b) => (
-              <option key={b} value={b}>
-                {b}
-              </option>
-            ))}
-          </select>
-          <FieldError id="budget-error" msg={err("budget")} />
-        </div>
-
         <div className="sm:col-span-2">
-          <label htmlFor="details" className="field-label">Additional details</label>
-          <textarea id="details" name="details" rows={4} className="field resize-y" placeholder="Where is your marketing today, and where would you like it to be?" value={values.details} onChange={(e) => set("details", e.target.value)} onBlur={() => blur("details")} {...aria("details")} />
+          <label htmlFor="details" className="field-label">Anything else? <span className="font-normal text-slate-text/70">(optional)</span></label>
+          <textarea id="details" name="details" rows={3} className="field resize-y" value={values.details} onChange={(e) => set("details", e.target.value)} onBlur={(e) => blur("details", e)} {...aria("details")} />
           <FieldError id="details-error" msg={err("details")} />
         </div>
       </div>
@@ -268,12 +200,12 @@ export function LeadForm() {
             </>
           ) : (
             <>
-              Request my consultation <Arrow />
+              Book my consultation <Arrow />
             </>
           )}
         </button>
         <p className="max-w-xs text-xs leading-relaxed text-slate-text/80">
-          We only use your details to respond to your request. See our{" "}
+          We only use your details to reply to you. See our{" "}
           <Link href="/privacy" className="underline hover:text-electric">
             privacy policy
           </Link>

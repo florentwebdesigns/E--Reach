@@ -42,19 +42,17 @@ All content is structured data, so sections update without touching layout code:
 | File | Content |
 | --- | --- |
 | `src/content/site.ts` | Business name, phone, nav links, social links |
-| `src/content/services.ts` | Services (set `offered: false` to hide one) |
+| `src/content/services.ts` | Services (one short line each) |
 | `src/content/projects.ts` | Portfolio projects and filter categories |
-| `src/content/caseStudies.ts` | Results / case studies |
 | `src/content/reviews.ts` | Client reviews |
 
 ### Placeholders that must be replaced
 
 To keep the site honest, nothing about clients, results, or reviews is invented:
 
-- **Portfolio and case studies** are labeled "Concept · placeholder". Replace them with real projects, add images to `public/work/`, and set `placeholder: false`. Only fill in `outcome` with verified results.
+- **Portfolio projects** are labeled "Concept · placeholder". Replace them with real projects, add images to `public/work/`, and set `placeholder: false`. Only fill in `outcome` with verified results.
 - **Reviews** are labeled "Placeholder · not a real review". Replace with real, approved client reviews and set `placeholder: false`. Only add `rating` when it comes from a verified source.
-- **Privacy Policy and Terms** (`src/app/privacy`, `src/app/terms`) are starter templates. Have them reviewed.
-- **About** contains no team, founding story, or credentials. Add a team section once real details are confirmed.
+- **Privacy Policy** (`src/app/privacy`) is a starter template. Have it reviewed.
 
 ## Accessibility and motion
 

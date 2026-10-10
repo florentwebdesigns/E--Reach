@@ -120,20 +120,10 @@ function FeaturedProject({ project, onOpen }: { project: Project; onOpen: () => 
                 <dt className="text-mist-dim">Category</dt>
                 <dd className="mt-1 font-semibold text-white">{project.category}</dd>
               </div>
-              <div className="col-span-2">
-                <dt className="text-mist-dim">Services</dt>
-                <dd className="mt-2 flex flex-wrap gap-2">
-                  {project.services.map((s) => (
-                    <span key={s} className="rounded-full border border-white/10 px-3 py-1 text-xs font-medium text-mist">
-                      {s}
-                    </span>
-                  ))}
-                </dd>
-              </div>
             </dl>
             <span className="mt-8 inline-flex items-center gap-3 font-display font-semibold text-white">
               <span className="relative">
-                View case study
+                View project
                 <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-50 bg-gradient-to-r from-cyan to-electric transition-transform duration-700 ease-out-expo group-hover:scale-x-100" />
               </span>
               <Arrow className="transition-transform duration-500 group-hover:translate-x-1" />
@@ -203,27 +193,12 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
             </h3>
             {project.placeholder && (
               <p className="mt-4 rounded-xl border border-cyan/25 bg-cyan/[0.06] px-4 py-3 text-sm text-mist">
-                This is a concept piece that demonstrates our approach and layout. It is not client work and will be
-                replaced with real projects.
+                Concept sample, not client work. It will be replaced with real projects.
               </p>
             )}
             <p className="mt-6 max-w-3xl text-lg leading-relaxed text-mist">{project.overview}</p>
 
-            <div className="mt-10 grid gap-8 border-t border-white/[0.08] pt-8 md:grid-cols-3">
-              {[
-                ["The challenge", project.challenge],
-                ["The strategy", project.strategy],
-                ["The execution", project.execution],
-              ].map(([h, t], i) => (
-                <div key={h}>
-                  <p className="font-display text-sm font-semibold text-cyan">0{i + 1}</p>
-                  <h4 className="mt-2 text-lg font-semibold">{h}</h4>
-                  <p className="mt-2 leading-relaxed text-mist">{t}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10 grid gap-8 border-t border-white/[0.08] pt-8 md:grid-cols-[1fr_1fr]">
+            <div className="mt-10 grid gap-8 border-t border-white/[0.08] pt-8 ">
               <div>
                 <h4 className="text-lg font-semibold">Services provided</h4>
                 <ul className="mt-3 flex flex-wrap gap-2">
@@ -233,12 +208,6 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                     </li>
                   ))}
                 </ul>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold">Outcome</h4>
-                <p className="mt-3 leading-relaxed text-mist">
-                  {project.outcome ?? "Outcomes are only published once they have been verified with the client."}
-                </p>
               </div>
             </div>
 
@@ -279,13 +248,7 @@ export function Portfolio() {
           <SectionHeading
             id="work-title"
             eyebrow="Selected work"
-            title={
-              <>
-                Creative that makes an impression.{" "}
-                <span className="text-mist-dim">Strategy that moves business forward.</span>
-              </>
-            }
-            intro="Explore our work across digital experiences, brand campaigns, and marketing creative."
+            title="See what we can build for you."
           />
         </div>
 
@@ -328,34 +291,11 @@ export function Portfolio() {
         </div>
 
         <p className="mt-14 text-sm text-mist-dim">
-          Projects shown are concept pieces demonstrating our design approach while our client portfolio is being
-          prepared.
+          Concept samples shown while our client portfolio is being added.
         </p>
       </div>
 
       <ProjectDialog project={open} onClose={() => setOpen(null)} />
     </section>
-  );
-}
-
-export function PortfolioCta() {
-  return (
-    <div className="bg-ink-950 pb-24 sm:pb-32">
-      <div className="container-x">
-        <div
-          data-reveal
-          className="gradient-border relative flex flex-col items-start justify-between gap-8 overflow-hidden rounded-[28px] bg-navy-900 p-8 sm:p-12 lg:flex-row lg:items-center"
-        >
-          <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-electric/25 blur-[90px]" />
-          <div className="relative">
-            <p className="font-display text-2xl font-semibold leading-tight text-white sm:text-[2rem]">
-              Like what you see? Let&apos;s create something for your brand.
-            </p>
-            <p className="mt-2 text-mist">Tell us about your business and where you want to go next.</p>
-          </div>
-          <BookingButton className="relative">Discuss your project</BookingButton>
-        </div>
-      </div>
-    </div>
   );
 }

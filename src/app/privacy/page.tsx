@@ -19,9 +19,8 @@ export default function PrivacyPage() {
       <h2>Information you give us</h2>
       <p>When you request a consultation, we collect the details you choose to provide, which may include:</p>
       <ul>
-        <li>Your name, business name, email address, and phone number</li>
-        <li>Your website address, industry, services of interest, goals, and budget range</li>
-        <li>Any additional details you include in your message</li>
+        <li>Your name, email address, phone number, and business name</li>
+        <li>What you need help with, and anything else you include in your message</li>
       </ul>
       <h2>How we use it</h2>
       <p>
