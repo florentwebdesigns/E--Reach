@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# E-Reach Marketing website
 
-## Getting Started
+Marketing site for E-Reach Marketing, built with Next.js (App Router), TypeScript, and Tailwind CSS v4. Ready to deploy on Vercel.
 
-First, run the development server:
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # then fill in the values you need
+npm run dev                  # http://localhost:3000
+npm run build                # production build check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Required | What it does |
+| --- | --- | --- |
+| `FORMSPREE_FORM_ID` | One of these two | Formspree form id. Leads are emailed to you by Formspree. |
+| `LEAD_WEBHOOK_URL` | One of these two | Any HTTPS webhook (Zapier, Make, HubSpot, CRM). Receives the lead as JSON. |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Your live domain, for canonical links, sitemap, and social previews. |
+| `NEXT_PUBLIC_BOOKING_URL` | Optional | Calendly / Cal.com link. "Book a free consultation" buttons open it. |
+| `NEXT_PUBLIC_REVIEWS_URL` | Optional | Google or other review profile. Adds a "Read client reviews" button. |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Until `FORMSPREE_FORM_ID` or `LEAD_WEBHOOK_URL` is set, the consultation form does not pretend to work: it shows a clear message asking visitors to call 973-666-6492.
 
-## Learn More
+### Setting up Formspree (simplest)
 
-To learn more about Next.js, take a look at the following resources:
+1. Create a free form at formspree.io and copy its id (the part after `/f/`).
+2. In Vercel, add `FORMSPREE_FORM_ID` under Project → Settings → Environment Variables.
+3. Redeploy, submit a test, and confirm the email arrives.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How the lead form works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/components/LeadForm.tsx` validates in the browser, then posts to `/api/lead`.
+- `src/app/api/lead/route.ts` re-validates on the server, checks a hidden honeypot field and a minimum fill time, applies a basic rate limit, and forwards the lead. It only returns success when the destination accepts it.
+- Validation rules live in `src/lib/lead.ts` and are shared by both sides.
 
-## Deploy on Vercel
+## Editing content
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+All content is structured data, so sections update without touching layout code:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| File | Content |
+| --- | --- |
+| `src/content/site.ts` | Business name, phone, nav links, social links |
+| `src/content/services.ts` | Services (set `offered: false` to hide one) |
+| `src/content/projects.ts` | Portfolio projects and filter categories |
+| `src/content/caseStudies.ts` | Results / case studies |
+| `src/content/reviews.ts` | Client reviews |
+
+### Placeholders that must be replaced
+
+To keep the site honest, nothing about clients, results, or reviews is invented:
+
+- **Portfolio and case studies** are labeled "Concept · placeholder". Replace them with real projects, add images to `public/work/`, and set `placeholder: false`. Only fill in `outcome` with verified results.
+- **Reviews** are labeled "Placeholder · not a real review". Replace with real, approved client reviews and set `placeholder: false`. Only add `rating` when it comes from a verified source.
+- **Privacy Policy and Terms** (`src/app/privacy`, `src/app/terms`) are starter templates. Have them reviewed.
+- **About** contains no team, founding story, or credentials. Add a team section once real details are confirmed.
+
+## Accessibility and motion
+
+Semantic landmarks, skip link, visible focus states, labelled form controls with inline errors, keyboard-friendly dialog and menu, and full `prefers-reduced-motion` support (all animation stops and content stays visible). Scroll reveals only hide content once JavaScript has loaded.
