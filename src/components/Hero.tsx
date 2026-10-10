@@ -33,7 +33,7 @@ export function Hero() {
 
           <h1
             id="hero-title"
-            className="mt-6 text-[2.9rem] font-semibold leading-[0.98] sm:text-[4.2rem] lg:text-[5.1rem] xl:text-[5.8rem]"
+            className="mt-6 text-[2.9rem] font-semibold leading-[0.98] sm:text-[4.2rem] lg:text-[4.7rem] xl:text-[5.4rem]"
           >
             <span className="sr-only">Turn your online presence into real opportunities.</span>
             <span aria-hidden="true">
@@ -42,11 +42,24 @@ export function Hero() {
                   <span style={{ "--i": idx } as React.CSSProperties}>{w}</span>
                 </span>
               ))}
-              <span className="hero-word">
-                <span className="text-gradient pr-[0.04em]" style={{ "--i": line1.length } as React.CSSProperties}>
-                  {line2.join(" ")}
+              {line2.map((w, idx) => (
+                <span key={w} className="hero-word mr-[0.22em]">
+                  <span
+                    className="bg-clip-text pr-[0.04em] text-transparent"
+                    style={
+                      {
+                        "--i": idx + line1.length,
+                        backgroundImage:
+                          idx === 0
+                            ? "linear-gradient(100deg, #e6f8ff, #7fe3ff 55%, #3fd6ff)"
+                            : "linear-gradient(100deg, #3fd6ff, #2e6bff 60%, #8a63ff)",
+                      } as React.CSSProperties
+                    }
+                  >
+                    {w}
+                  </span>
                 </span>
-              </span>
+              ))}
             </span>
           </h1>
 
